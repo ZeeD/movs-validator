@@ -1,3 +1,5 @@
+import decimal
+
 import movs
 
 
@@ -8,11 +10,14 @@ class Validator:
         self.kv = kv
         self.csv = csv
 
-    def validate(self):
+    def validate(self) -> None:
         print(f'bpol.saldo_contabile:               {self.kv.saldo_contabile}')
-        print(f'bpol.saldo_disponibile:             {self.kv.saldo_disponibile}')
+        print(
+            f'bpol.saldo_disponibile:             {self.kv.saldo_disponibile}')
 
-        s = sum((item.accrediti if item.accrediti is not None else 0) -
-                (item.addebiti if item.addebiti is not None else 0)
+        zero = decimal.Decimal(0)
+
+        s = sum((item.accrediti if item.accrediti is not None else zero) -
+                (item.addebiti if item.addebiti is not None else zero)
                 for item in self.csv)
         print(f'Σ (item.accredito - item.addebito): {s}')

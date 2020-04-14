@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import logging
 import sys
 
 from movsvalidator import Validator
-import logging
 
 
 def main() -> None:
