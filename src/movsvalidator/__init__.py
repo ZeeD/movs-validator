@@ -1,3 +1,4 @@
+import datetime
 import decimal
 
 import movs
@@ -11,6 +12,11 @@ class Validator:
         self.csv = csv
 
     def validate(self) -> None:
+        print(f'bpol.saldo_al:                      {self.kv.saldo_al}')
+        if self.kv.saldo_al:
+            ultimo_update = (datetime.date.today() - self.kv.saldo_al).days
+            print(
+                f'ultimo update:                      {ultimo_update} giorni fa')
         print(f'bpol.saldo_contabile:               {self.kv.saldo_contabile}')
         print(
             f'bpol.saldo_disponibile:             {self.kv.saldo_disponibile}')
