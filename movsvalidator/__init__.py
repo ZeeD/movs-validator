@@ -1,12 +1,13 @@
 from datetime import date
 from decimal import Decimal
+from sys import argv
 
 from movs import read_txt
 
 ZERO = Decimal(0)
 
 
-def validate(fn: str) -> None:
+def validate(fn: str) -> bool:
     print(fn)
     kv, csv = read_txt(fn)
     print(f'bpol.saldo_al:                      {kv.saldo_al}')
@@ -20,19 +21,16 @@ def validate(fn: str) -> None:
             (item.addebiti if item.addebiti is not None else ZERO)
             for item in csv)
     print(f'Σ (item.accredito - item.addebito): {s}')
-
-
-from sys import argv
+    return kv.saldo_contabile == s == kv.saldo_disponibile
 
 
 def main() -> None:
-    'main'
-
     if not argv[1:]:
         raise SystemExit(f'uso: {argv[0]} ACCUMULATOR...')
 
     for fn in argv[1:]:
-        validate(fn)
+        if not validate(fn):
+            raise SystemExit(f'{fn} seems has some problems!')
 
 
 if __name__ == '__main__':
