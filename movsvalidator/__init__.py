@@ -1,10 +1,7 @@
 from datetime import date
-from decimal import Decimal
 from sys import argv
 
 from movs import read_txt
-
-ZERO = Decimal(0)
 
 
 def validate(fn: str) -> bool:
@@ -14,13 +11,12 @@ def validate(fn: str) -> bool:
     if kv.saldo_al:
         ultimo_update = (date.today() - kv.saldo_al).days
         print(f'ultimo update:                      {ultimo_update} giorni fa')
-    print(f'bpol.saldo_contabile:               {kv.saldo_contabile}')
-    print(f'bpol.saldo_disponibile:             {kv.saldo_disponibile}')
+    print(f'bpol.saldo_contabile:               {float(kv.saldo_contabile):_}')
+    print(
+        f'bpol.saldo_disponibile:             {float(kv.saldo_disponibile):_}')
 
-    s = sum((item.accrediti if item.accrediti is not None else ZERO) -
-            (item.addebiti if item.addebiti is not None else ZERO)
-            for item in csv)
-    print(f'Σ (item.accredito - item.addebito): {s}')
+    s = sum(item.money for item in csv)
+    print(f'Σ (item.accredito - item.addebito): {float(s):_}')
     return kv.saldo_contabile == s == kv.saldo_disponibile
 
 
