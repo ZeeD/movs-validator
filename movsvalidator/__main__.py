@@ -1,4 +1,4 @@
-from . import main
+from .movsvalidator import main
 
 if __name__ == '__main__':
     main()

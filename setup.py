@@ -15,6 +15,6 @@ setup(name='movs-validator',
       },
       entry_points={
           'console_scripts': [
-              'movs-validator = movsvalidator:main'
+              'movs-validator = movsvalidator.__main__:main'
           ]
       })
