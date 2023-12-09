@@ -7,9 +7,9 @@ from logging import error
 from logging import info
 from sys import argv
 
-from movs.model import KV
-from movs.model import Row
-from movs.movs import read_txt
+from movslib.model import KV
+from movslib.model import Row
+from movslib.movs import read_txt
 
 
 def validate_saldo(kv: KV, csv: list[Row]) -> bool:
