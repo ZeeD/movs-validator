@@ -16,12 +16,12 @@ devtools = [
     'ruff',
 ]
 
-[project.scripts]
-movs-validator = "movsvalidator:main"
-
 [tool.setuptools.packages.find]
 where = ['src']
 namespaces = false
+
+[project.scripts]
+movs-validator = "movsvalidator:main"
 
 [tool.mypy]
 mypy_path = 'src'
