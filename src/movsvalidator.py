@@ -47,11 +47,11 @@ def validate(fn: str) -> bool:
 
 
 def main() -> None:
+    basicConfig(level=INFO, format='%(message)s')
+
     if not argv[1:]:
         error('uso: %s ACCUMULATOR...', argv[0])
         raise SystemExit
-
-    basicConfig(level=INFO, format='%(message)s')
 
     for fn in argv[1:]:
         if not validate(fn):
