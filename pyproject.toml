@@ -21,7 +21,7 @@ where = ['src']
 namespaces = false
 
 [project.scripts]
-movs-validator = "movsvalidator:main"
+movs-validator = 'movsvalidator:main'
 
 [tool.mypy]
 mypy_path = 'src'
