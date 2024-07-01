@@ -6,13 +6,16 @@ from logging import basicConfig
 from logging import error
 from logging import info
 from sys import argv
+from typing import TYPE_CHECKING
 
-from movslib.model import KV
-from movslib.model import Row
 from movslib.movs import read_txt
 
+if TYPE_CHECKING:
+    from movslib.model import KV
+    from movslib.model import Row
 
-def validate_saldo(kv: KV, csv: list[Row]) -> bool:
+
+def validate_saldo(kv: 'KV', csv: list['Row']) -> bool:
     info('bpol.saldo_al:                      %s', kv.saldo_al)
     if kv.saldo_al:
         ultimo_update = (datetime.now(UTC).date() - kv.saldo_al).days
@@ -31,7 +34,7 @@ def validate_saldo(kv: KV, csv: list[Row]) -> bool:
     return ret
 
 
-def validate_dates(csv: list[Row]) -> bool:
+def validate_dates(csv: list['Row']) -> bool:
     data_contabile: date | None = None
     for row in csv:
         if data_contabile is not None and data_contabile < row.data_contabile:
