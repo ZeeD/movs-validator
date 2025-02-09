@@ -16,7 +16,7 @@ dependencies = [
 ]
 urls.Homepage = "https://github.com/ZeeD/movs-validator"
 urls.Repository = "https://github.com/ZeeD/movs-validator.git"
-scripts.movs-validator = "movsvalidator:main"
+scripts.movs-validator = "movsvalidator.movsvalidator:main"
 
 [dependency-groups]
 dev = [
