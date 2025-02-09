@@ -5,48 +5,63 @@ from logging import INFO
 from logging import basicConfig
 from logging import error
 from logging import info
+from pathlib import Path
 from sys import argv
 from typing import TYPE_CHECKING
 
 from movslib.movs import read_txt
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from movslib.model import KV
-    from movslib.model import Row
+    from movslib.model import Rows
 
 
-def validate_saldo(kv: 'KV', csv: list['Row']) -> bool:
-    info('bpol.saldo_al:                      %s', kv.saldo_al)
+def validate_saldo(kv: 'KV', csv: 'Rows', messages: list[str]) -> bool:
+    messages.append(f'bpol.saldo_al:                      {kv.saldo_al}')
     if kv.saldo_al:
-        ultimo_update = (datetime.now(UTC).date() - kv.saldo_al).days
-        info('ultimo update:                      %s giorni fa', ultimo_update)
-    info('bpol.saldo_contabile:               %s', kv.saldo_contabile)
-    info('bpol.saldo_disponibile:             %s', kv.saldo_disponibile)
+        ultimo_update = (datetime.now(tz=UTC).date() - kv.saldo_al).days
+        messages.append(
+            f'ultimo update:                      {ultimo_update} giorni fa'
+        )
+    messages.append(
+        f'bpol.saldo_contabile:               {float(kv.saldo_contabile):_}'
+    )
+    messages.append(
+        f'bpol.saldo_disponibile:             {float(kv.saldo_disponibile):_}'
+    )
 
     s = sum(item.money for item in csv)
-    info('Σ (item.accredito - item.addebito): %s', s)
+    messages.append(f'Σ (item.accredito - item.addebito): {float(s):_}')
     ret = kv.saldo_contabile == s == kv.saldo_disponibile
     if not ret:
         delta = max(
             [abs(kv.saldo_contabile - s), abs(s - kv.saldo_disponibile)]
         )
-        info('Δ:                                  %s', delta)
+        messages.append(f'Δ:                                  {float(delta):_}')
     return ret
 
 
-def validate_dates(csv: list['Row']) -> bool:
+def validate_dates(csv: 'Rows', messages: list[str]) -> bool:
     data_contabile: date | None = None
     for row in csv:
         if data_contabile is not None and data_contabile < row.data_contabile:
-            error('%s < %s!', data_contabile, row.data_contabile)
+            messages.append(f'{data_contabile} < {row.data_contabile}!')
             return False
     return True
 
 
-def validate(fn: str) -> bool:
-    info(fn)
-    kv, csv = read_txt(fn)
-    return all([validate_saldo(kv, csv), validate_dates(csv)])
+def validate(
+    fn: str,
+    messages: list[str],
+    read: 'Callable[[str, str], tuple[KV, Rows]]' = read_txt,
+) -> bool:
+    messages.append(fn)
+    kv, csv = read(fn, Path(fn).stem)
+    return all(
+        [validate_saldo(kv, csv, messages), validate_dates(csv, messages)]
+    )
 
 
 def main() -> None:
@@ -57,6 +72,10 @@ def main() -> None:
         raise SystemExit
 
     for fn in argv[1:]:
-        if not validate(fn):
+        messages: list[str] = []
+        ok = validate(fn, messages)
+        for message in messages:
+            info('%s', message)
+        if not ok:
             error('%s seems has some problems!', fn)
             raise SystemExit

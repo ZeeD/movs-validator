@@ -5,28 +5,30 @@ requires = [ "pdm-backend" ]
 [project]
 name = "zeed-movs-validator"
 version = "0.0.0"
-requires-python = "==3.12.*"
+requires-python = ">=3.12,<3.14"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "zeed-movslib>=0.0.2",
+    "zeed-movslib>=0.0.3",
 ]
 urls.Homepage = "https://github.com/ZeeD/movs-validator"
 urls.Repository = "https://github.com/ZeeD/movs-validator.git"
 scripts.movs-validator = "movsvalidator:main"
 
+[dependency-groups]
+dev = [
+    "mypy>=1.10.1",
+    "pyproject-fmt>=2.4.3",
+    "ruff>=0.5",
+    "coverage>=7.6.11",
+]
+
 [tool.pdm]
 distribution = true
 plugins = [ "pdm-version" ]
-
-[tool.pdm.dev-dependencies]
-dev = [
-    "mypy>=1.10.1",
-    "ruff>=0.5.0",
-    "pyproject-fmt>=2.4.3",
-]
 
 [tool.pdm.scripts]
 _.env = { PYTHONPATH = "src:tests" }
@@ -41,6 +43,7 @@ tests = { composite = [
     "coverage report",
     "coverage erase",
 ] }
+start = "movs-validator"
 
 [tool.ruff]
 line-length = 80
