@@ -3,19 +3,18 @@ from datetime import date
 from datetime import datetime
 from logging import INFO
 from logging import basicConfig
-from logging import error
-from logging import info
+from logging import getLogger
 from pathlib import Path
 from sys import argv
 from typing import TYPE_CHECKING
 
-from movslib.movs import read_txt
+from movslib.reader import read
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
     from movslib.model import KV
     from movslib.model import Rows
+
+logger = getLogger(__name__)
 
 
 def validate_saldo(kv: 'KV', csv: 'Rows', messages: list[str]) -> bool:
@@ -52,11 +51,7 @@ def validate_dates(csv: 'Rows', messages: list[str]) -> bool:
     return True
 
 
-def validate(
-    fn: str,
-    messages: list[str],
-    read: 'Callable[[str, str], tuple[KV, Rows]]' = read_txt,
-) -> bool:
+def validate(fn: str, messages: list[str]) -> bool:
     messages.append(fn)
     kv, csv = read(fn, Path(fn).stem)
     return all(
@@ -68,14 +63,14 @@ def main() -> None:
     basicConfig(level=INFO, format='%(message)s')
 
     if not argv[1:]:
-        error('uso: %s ACCUMULATOR...', argv[0])
+        logger.error('uso: %s ACCUMULATOR...', argv[0])
         raise SystemExit
 
     for fn in argv[1:]:
         messages: list[str] = []
         ok = validate(fn, messages)
         for message in messages:
-            info('%s', message)
+            logger.info('%s', message)
         if not ok:
-            error('%s seems has some problems!', fn)
+            logger.error('%s seems has some problems!', fn)
             raise SystemExit
