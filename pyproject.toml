@@ -28,7 +28,7 @@ dev = [
 
 [tool.pdm]
 distribution = true
-plugins = [ "pdm-version" ]
+plugins = [ "pdm-bump" ]
 
 [tool.pdm.scripts]
 _.env = { PYTHONPATH = "src:tests" }
@@ -44,6 +44,12 @@ tests = { composite = [
     "coverage erase",
 ] }
 start = "movs-validator"
+bump_and_publish = { composite = [
+    "pdm bump patch --commit --tag",
+    "pdm publish",
+    "git push",
+    "git push --tags",
+] }
 
 [tool.ruff]
 line-length = 80
